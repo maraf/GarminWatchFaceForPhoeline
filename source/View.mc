@@ -21,15 +21,19 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_BLACK);
         dc.clear();
 
+        var background = WatchUi.loadResource(Rez.Drawables.WatchFaceBackground)
+            as WatchUi.BitmapResource;
+        dc.drawBitmap(0, 0, background);
+
         var clockTime = System.getClockTime();
         var timeString = Lang.format("$1$:$2$", [
             clockTime.hour.format("%02d"),
             clockTime.min.format("%02d")
         ]);
 
-        (View.findDrawableById("TimeLabel") as Text).setText(timeString);
-
-        View.onUpdate(dc);
+        var timeLabel = View.findDrawableById("TimeLabel") as Text;
+        timeLabel.setText(timeString);
+        timeLabel.draw(dc);
         drawMetricRings(dc);
     }
 
