@@ -8,13 +8,14 @@ import Toybox.WatchUi;
 
 class PhoelineWatchFaceView extends WatchUi.WatchFace {
     private const STEP_RING_COLOR = Graphics.createColor(255, 252, 250, 165);
+    private const TIME_FILL_COLOR = Graphics.createColor(255, 255, 229, 158);
+    private const TIME_OUTLINE_COLOR = Graphics.createColor(255, 22, 57, 63);
 
     function initialize() {
         WatchFace.initialize();
     }
 
     function onLayout(dc as Dc) as Void {
-        setLayout(Rez.Layouts.WatchFace(dc));
     }
 
     function onUpdate(dc as Dc) as Void {
@@ -31,10 +32,23 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
             clockTime.min.format("%02d")
         ]);
 
-        var timeLabel = View.findDrawableById("TimeLabel") as Text;
-        timeLabel.setText(timeString);
-        timeLabel.draw(dc);
+        drawTime(dc, timeString);
         drawMetricRings(dc);
+    }
+
+    private function drawTime(dc as Dc, timeString as String) as Void {
+        var centerX = dc.getWidth() / 2;
+        var centerY = dc.getHeight() / 2 - 45;
+        var justification = Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER;
+
+        dc.setColor(TIME_OUTLINE_COLOR, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(centerX - 2, centerY, Graphics.FONT_NUMBER_MEDIUM, timeString, justification);
+        dc.drawText(centerX + 2, centerY, Graphics.FONT_NUMBER_MEDIUM, timeString, justification);
+        dc.drawText(centerX, centerY - 2, Graphics.FONT_NUMBER_MEDIUM, timeString, justification);
+        dc.drawText(centerX, centerY + 2, Graphics.FONT_NUMBER_MEDIUM, timeString, justification);
+
+        dc.setColor(TIME_FILL_COLOR, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(centerX, centerY, Graphics.FONT_NUMBER_MEDIUM, timeString, justification);
     }
 
     private function drawMetricRings(dc as Dc) as Void {
