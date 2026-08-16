@@ -10,9 +10,9 @@ import Toybox.WatchUi;
 
 class PhoelineWatchFaceView extends WatchUi.WatchFace {
     private const STEP_RING_COLOR = Graphics.createColor(255, 252, 250, 165);
-    private const BODY_BATTERY_RING_COLOR = Graphics.createColor(255, 78, 183, 255);
+    private const BODY_BATTERY_RING_COLOR = Graphics.createColor(255, 114, 199, 255);
     private const CALORIES_COLOR = Graphics.createColor(255, 255, 179, 107);
-    private const TIME_FILL_COLOR = Graphics.createColor(255, 255, 229, 158);
+    private const TIME_FILL_COLOR = STEP_RING_COLOR;
     private const TIME_OUTLINE_COLOR = Graphics.createColor(255, 22, 57, 63);
 
     function initialize() {

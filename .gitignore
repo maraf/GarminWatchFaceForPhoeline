@@ -1,1 +1,6 @@
 bin
+gen
+mir
+internal-mir
+*.prg
+*.prg.debug.xml

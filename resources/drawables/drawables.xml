@@ -4,5 +4,5 @@
     <bitmap id="WeatherIcon" filename="weather_icon.svg" />
     <bitmap id="CaloriesIcon" filename="calories_icon.svg" />
     <bitmap id="ActivityIcon" filename="activity_icon.svg" />
-    <bitmap id="StepsIcon" filename="steps_icon.svg" />
+    <bitmap id="StepsIcon" filename="steps_icon.png" />
 </drawables>
