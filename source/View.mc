@@ -10,7 +10,8 @@ import Toybox.WatchUi;
 
 class PhoelineWatchFaceView extends WatchUi.WatchFace {
     private const STEP_RING_COLOR = Graphics.createColor(255, 252, 250, 165);
-    private const BODY_BATTERY_RING_COLOR = Graphics.createColor(78, 183, 255, 255);
+    private const BODY_BATTERY_RING_COLOR = Graphics.createColor(255, 78, 183, 255);
+    private const CALORIES_COLOR = Graphics.createColor(255, 255, 179, 107);
     private const TIME_FILL_COLOR = Graphics.createColor(255, 255, 229, 158);
     private const TIME_OUTLINE_COLOR = Graphics.createColor(255, 22, 57, 63);
 
@@ -74,9 +75,9 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
             temperature == null ? "--" : temperature.toNumber().format("%d"),
             Graphics.TEXT_JUSTIFY_RIGHT);
         drawIcon(dc, Rez.Drawables.WeatherIcon, right + 4, 238);
-        drawInfoText(dc, right - 16, 262,
+        drawMetricText(dc, right - 16, 262,
             calories == null ? "--" : calories.toString(),
-            Graphics.TEXT_JUSTIFY_RIGHT);
+            Graphics.TEXT_JUSTIFY_RIGHT, CALORIES_COLOR);
         drawIcon(dc, Rez.Drawables.CaloriesIcon, right - 12, 264);
         drawMetricText(dc, right - 32, 288,
             bodyBattery == null ? "--" : bodyBattery.toNumber().format("%d"),
