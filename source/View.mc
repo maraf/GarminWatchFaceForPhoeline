@@ -71,22 +71,22 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
         var temperature = getTemperature();
 
         var right = dc.getWidth() - 70;
-        drawInfoText(dc, right, 236,
+        drawInfoText(dc, right, 228,
             temperature == null ? "--" : temperature.toNumber().format("%d"),
             Graphics.TEXT_JUSTIFY_RIGHT);
-        drawIcon(dc, Rez.Drawables.WeatherIcon, right + 4, 238);
-        drawMetricText(dc, right - 16, 262,
+        drawIcon(dc, Rez.Drawables.WeatherIcon, right + 4, 230);
+        drawMetricText(dc, right - 16, 256,
             calories == null ? "--" : calories.toString(),
             Graphics.TEXT_JUSTIFY_RIGHT, CALORIES_COLOR);
-        drawIcon(dc, Rez.Drawables.CaloriesIcon, right - 12, 264);
-        drawMetricText(dc, right - 32, 288,
+        drawIcon(dc, Rez.Drawables.CaloriesIcon, right - 12, 258);
+        drawMetricText(dc, right - 32, 284,
             bodyBattery == null ? "--" : bodyBattery.toNumber().format("%d"),
             Graphics.TEXT_JUSTIFY_RIGHT, BODY_BATTERY_RING_COLOR);
-        drawIcon(dc, Rez.Drawables.ActivityIcon, right - 28, 290);
-        drawMetricText(dc, right - 48, 314,
+        drawIcon(dc, Rez.Drawables.ActivityIcon, right - 28, 286);
+        drawMetricText(dc, right - 48, 312,
             steps == null ? "--" : steps.toString(),
             Graphics.TEXT_JUSTIFY_RIGHT, STEP_RING_COLOR);
-        drawIcon(dc, Rez.Drawables.StepsIcon, right - 44, 316);
+        drawIcon(dc, Rez.Drawables.StepsIcon, right - 44, 314);
     }
 
     private function drawIcon(dc as Dc, resource as ResourceId, x as Number, y as Number) as Void {
