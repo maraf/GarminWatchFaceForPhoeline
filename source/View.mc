@@ -4,6 +4,8 @@ import Toybox.Lang;
 import Toybox.Math;
 import Toybox.SensorHistory;
 import Toybox.System;
+import Toybox.Time;
+import Toybox.Time.Gregorian;
 import Toybox.WatchUi;
 
 class PhoelineWatchFaceView extends WatchUi.WatchFace {
@@ -32,8 +34,16 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
             clockTime.min.format("%02d")
         ]);
 
+        drawDate(dc);
         drawTime(dc, timeString);
         drawMetricRings(dc);
+        drawMetricStack(dc);
+    }
+
+    private function drawDate(dc as Dc) as Void {
+        var info = Gregorian.info(Time.now(), Time.FORMAT_LONG);
+        var dateString = info.day_of_week + " " + info.day.toString();
+        drawInfoText(dc, dc.getWidth() / 2, 66, dateString, Graphics.TEXT_JUSTIFY_CENTER);
     }
 
     private function drawTime(dc as Dc, timeString as String) as Void {
@@ -49,6 +59,34 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
 
         dc.setColor(TIME_FILL_COLOR, Graphics.COLOR_TRANSPARENT);
         dc.drawText(centerX, centerY, Graphics.FONT_NUMBER_MEDIUM, timeString, justification);
+    }
+
+    private function drawMetricStack(dc as Dc) as Void {
+        var activityInfo = ActivityMonitor.getInfo();
+        var calories = activityInfo has :calories ? activityInfo.calories : null;
+        var steps = activityInfo has :steps ? activityInfo.steps : null;
+        var bodyBattery = getBodyBattery();
+        var temperature = getTemperature();
+
+        var right = dc.getWidth() - 42;
+        drawInfoText(dc, right, 228,
+            temperature == null ? "-- C" : temperature.toNumber().format("%d") + " C",
+            Graphics.TEXT_JUSTIFY_RIGHT);
+        drawInfoText(dc, right - 16, 254,
+            calories == null ? "-- cal" : calories.toString() + " cal",
+            Graphics.TEXT_JUSTIFY_RIGHT);
+        drawInfoText(dc, right - 32, 280,
+            bodyBattery == null ? "-- BB" : bodyBattery.toNumber().format("%d") + " BB",
+            Graphics.TEXT_JUSTIFY_RIGHT);
+        drawInfoText(dc, right - 48, 306,
+            steps == null ? "-- st" : steps.toString() + " st",
+            Graphics.TEXT_JUSTIFY_RIGHT);
+    }
+
+    private function drawInfoText(dc as Dc, x as Number, y as Number,
+        value as String, justification as Number) as Void {
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(x, y, Graphics.FONT_XTINY, value, justification);
     }
 
     private function drawMetricRings(dc as Dc) as Void {
@@ -129,6 +167,24 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
         }
 
         var history = SensorHistory.getBodyBatteryHistory({});
+        if (history == null) {
+            return null;
+        }
+
+        var sample = history.next();
+        if (sample == null || sample.data == null) {
+            return null;
+        }
+
+        return sample.data;
+    }
+
+    private function getTemperature() as Number or Float or Null {
+        if (!(Toybox has :SensorHistory) || !(Toybox.SensorHistory has :getTemperatureHistory)) {
+            return null;
+        }
+
+        var history = SensorHistory.getTemperatureHistory({});
         if (history == null) {
             return null;
         }
