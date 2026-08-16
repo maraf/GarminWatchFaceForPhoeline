@@ -10,6 +10,7 @@ import Toybox.WatchUi;
 
 class PhoelineWatchFaceView extends WatchUi.WatchFace {
     private const STEP_RING_COLOR = Graphics.createColor(255, 252, 250, 165);
+    private const BODY_BATTERY_RING_COLOR = Graphics.createColor(78, 183, 255, 255);
     private const TIME_FILL_COLOR = Graphics.createColor(255, 255, 229, 158);
     private const TIME_OUTLINE_COLOR = Graphics.createColor(255, 22, 57, 63);
 
@@ -77,13 +78,13 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
             calories == null ? "--" : calories.toString(),
             Graphics.TEXT_JUSTIFY_RIGHT);
         drawIcon(dc, Rez.Drawables.CaloriesIcon, right - 12, 264);
-        drawInfoText(dc, right - 32, 288,
+        drawMetricText(dc, right - 32, 288,
             bodyBattery == null ? "--" : bodyBattery.toNumber().format("%d"),
-            Graphics.TEXT_JUSTIFY_RIGHT);
+            Graphics.TEXT_JUSTIFY_RIGHT, BODY_BATTERY_RING_COLOR);
         drawIcon(dc, Rez.Drawables.ActivityIcon, right - 28, 290);
-        drawInfoText(dc, right - 48, 314,
+        drawMetricText(dc, right - 48, 314,
             steps == null ? "--" : steps.toString(),
-            Graphics.TEXT_JUSTIFY_RIGHT);
+            Graphics.TEXT_JUSTIFY_RIGHT, STEP_RING_COLOR);
         drawIcon(dc, Rez.Drawables.StepsIcon, right - 44, 316);
     }
 
@@ -95,6 +96,12 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
     private function drawInfoText(dc as Dc, x as Number, y as Number,
         value as String, justification as Number) as Void {
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(x, y, Graphics.FONT_XTINY, value, justification);
+    }
+
+    private function drawMetricText(dc as Dc, x as Number, y as Number,
+        value as String, justification as Number, color as Number) as Void {
+        dc.setColor(color, Graphics.COLOR_TRANSPARENT);
         dc.drawText(x, y, Graphics.FONT_XTINY, value, justification);
     }
 
@@ -144,7 +151,7 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
             (bodyBattery == null ? "null" : bodyBattery.toString()));
         if (bodyBattery != null) {
             var bodyProgress = bodyBattery.toFloat() / 100.0;
-            dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_BLUE);
+            dc.setColor(BODY_BATTERY_RING_COLOR, BODY_BATTERY_RING_COLOR);
             dc.drawArc(centerX, centerY, 164, Graphics.ARC_CLOCKWISE, -90, -90 + (180 * bodyProgress));
         }
 
