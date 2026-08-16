@@ -68,19 +68,28 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
         var bodyBattery = getBodyBattery();
         var temperature = getTemperature();
 
-        var right = dc.getWidth() - 42;
-        drawInfoText(dc, right, 228,
-            temperature == null ? "-- C" : temperature.toNumber().format("%d") + " C",
+        var right = dc.getWidth() - 70;
+        drawInfoText(dc, right, 236,
+            temperature == null ? "--" : temperature.toNumber().format("%d"),
             Graphics.TEXT_JUSTIFY_RIGHT);
-        drawInfoText(dc, right - 16, 254,
-            calories == null ? "-- cal" : calories.toString() + " cal",
+        drawIcon(dc, Rez.Drawables.WeatherIcon, right + 4, 238);
+        drawInfoText(dc, right - 16, 262,
+            calories == null ? "--" : calories.toString(),
             Graphics.TEXT_JUSTIFY_RIGHT);
-        drawInfoText(dc, right - 32, 280,
-            bodyBattery == null ? "-- BB" : bodyBattery.toNumber().format("%d") + " BB",
+        drawIcon(dc, Rez.Drawables.CaloriesIcon, right - 12, 264);
+        drawInfoText(dc, right - 32, 288,
+            bodyBattery == null ? "--" : bodyBattery.toNumber().format("%d"),
             Graphics.TEXT_JUSTIFY_RIGHT);
-        drawInfoText(dc, right - 48, 306,
-            steps == null ? "-- st" : steps.toString() + " st",
+        drawIcon(dc, Rez.Drawables.ActivityIcon, right - 28, 290);
+        drawInfoText(dc, right - 48, 314,
+            steps == null ? "--" : steps.toString(),
             Graphics.TEXT_JUSTIFY_RIGHT);
+        drawIcon(dc, Rez.Drawables.StepsIcon, right - 44, 316);
+    }
+
+    private function drawIcon(dc as Dc, resource as ResourceId, x as Number, y as Number) as Void {
+        var icon = WatchUi.loadResource(resource) as WatchUi.BitmapResource;
+        dc.drawBitmap(x, y, icon);
     }
 
     private function drawInfoText(dc as Dc, x as Number, y as Number,
