@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<iq:manifest version="3" xmlns:iq="http://www.garmin.com/xml/connectiq">
+    <iq:application id="4b0b1b65-4e8c-4f5c-9bf1-0b4ef4e9a4de"
+                    type="watchface"
+                    name="@Strings.AppName"
+                    entry="PhoelineWatchFaceApp"
+                    launcherIcon="@Drawables.LauncherIcon"
+                    minApiLevel="5.1.0">
+        <iq:products>
+            <iq:product id="venu441mm"/>
+            <iq:product id="venu445mm"/>
+        </iq:products>
+        <iq:permissions/>
+        <iq:languages>
+            <iq:language>eng</iq:language>
+        </iq:languages>
+        <iq:barrels/>
+    </iq:application>
+</iq:manifest>
