@@ -7,6 +7,7 @@ import Toybox.System;
 import Toybox.Time;
 import Toybox.Time.Gregorian;
 import Toybox.WatchUi;
+import Toybox.Weather;
 
 class PhoelineWatchFaceView extends WatchUi.WatchFace {
     private const STEP_RING_COLOR = Graphics.createColor(255, 252, 250, 165);
@@ -221,21 +222,16 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
         return sample.data;
     }
 
-    private function getTemperature() as Number or Float or Null {
-        if (!(Toybox has :SensorHistory) || !(Toybox.SensorHistory has :getTemperatureHistory)) {
+    private function getTemperature() as Number or Float or Double or Long or Null {
+        if (!(Toybox has :Weather) || !(Toybox.Weather has :getCurrentConditions)) {
             return null;
         }
 
-        var history = SensorHistory.getTemperatureHistory({});
-        if (history == null) {
+        var conditions = Weather.getCurrentConditions() as Weather.CurrentConditions;
+        if (conditions == null) {
             return null;
         }
 
-        var sample = history.next();
-        if (sample == null || sample.data == null) {
-            return null;
-        }
-
-        return sample.data;
+        return conditions.temperature;
     }
 }
