@@ -15,11 +15,18 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
     private const CALORIES_COLOR = Graphics.createColor(255, 255, 179, 107);
     private const TIME_FILL_COLOR = STEP_RING_COLOR;
     private const TIME_OUTLINE_COLOR = Graphics.createColor(255, 22, 57, 63);
+    private const METRICS_REFRESH_SECONDS = 30;
     private var _background as BitmapResource?;
     private var _weatherIcon as BitmapResource?;
     private var _caloriesIcon as BitmapResource?;
     private var _activityIcon as BitmapResource?;
     private var _stepsIcon as BitmapResource?;
+    private var _metricsTimestamp as Number?;
+    private var _steps as Number = 0;
+    private var _stepGoal as Number = 10000;
+    private var _calories as Number?;
+    private var _bodyBattery as Number or Float or Null;
+    private var _temperature as Number or Float or Double or Long or Null;
 
     function initialize() {
         WatchFace.initialize();
@@ -40,6 +47,8 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
         if (_background != null) {
             dc.drawBitmap(0, 0, _background);
         }
+
+        refreshMetrics();
 
         var clockTime = System.getClockTime();
         var timeString = Lang.format("$1$:$2$", [
@@ -74,28 +83,47 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
         dc.drawText(centerX, centerY, Graphics.FONT_NUMBER_MEDIUM, timeString, justification);
     }
 
-    private function drawMetricStack(dc as Dc) as Void {
-        var activityInfo = ActivityMonitor.getInfo();
-        var calories = activityInfo has :calories ? activityInfo.calories : null;
-        var steps = activityInfo has :steps ? activityInfo.steps : null;
-        var bodyBattery = getBodyBattery();
-        var temperature = getTemperature();
+    private function refreshMetrics() as Void {
+        var now = Time.now().value();
+        if (_metricsTimestamp != null && now - _metricsTimestamp < METRICS_REFRESH_SECONDS) {
+            return;
+        }
 
+        var activityInfo = ActivityMonitor.getInfo();
+        if (activityInfo has :steps) {
+            var currentSteps = activityInfo.steps;
+            if (currentSteps != null) {
+                _steps = currentSteps;
+            }
+        }
+        if (activityInfo has :stepGoal) {
+            var currentStepGoal = activityInfo.stepGoal;
+            if (currentStepGoal != null && currentStepGoal > 0) {
+                _stepGoal = currentStepGoal;
+            }
+        }
+        _calories = activityInfo has :calories ? activityInfo.calories : null;
+        _bodyBattery = getBodyBattery();
+        _temperature = getTemperature();
+        _metricsTimestamp = now;
+    }
+
+    private function drawMetricStack(dc as Dc) as Void {
         var right = dc.getWidth() - 70;
         drawInfoText(dc, right, 228,
-            temperature == null ? "--" : temperature.toNumber().format("%d"),
+            _temperature == null ? "--" : _temperature.toNumber().format("%d"),
             Graphics.TEXT_JUSTIFY_RIGHT);
         drawIcon(dc, _weatherIcon, right + 4, 230);
         drawMetricText(dc, right - 16, 256,
-            calories == null ? "--" : calories.toString(),
+            _calories == null ? "--" : _calories.toString(),
             Graphics.TEXT_JUSTIFY_RIGHT, CALORIES_COLOR);
         drawIcon(dc, _caloriesIcon, right - 12, 258);
         drawMetricText(dc, right - 32, 284,
-            bodyBattery == null ? "--" : bodyBattery.toNumber().format("%d"),
+            _bodyBattery == null ? "--" : _bodyBattery.toNumber().format("%d"),
             Graphics.TEXT_JUSTIFY_RIGHT, BODY_BATTERY_RING_COLOR);
         drawIcon(dc, _activityIcon, right - 28, 286);
         drawMetricText(dc, right - 48, 312,
-            steps == null ? "--" : steps.toString(),
+            _steps.toString(),
             Graphics.TEXT_JUSTIFY_RIGHT, STEP_RING_COLOR);
         drawIcon(dc, _stepsIcon, right - 44, 314);
     }
@@ -128,22 +156,7 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
         dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
         dc.drawArc(centerX, centerY, 184, Graphics.ARC_CLOCKWISE, 0, 360);
 
-        var activityInfo = ActivityMonitor.getInfo();
-        var steps = 0;
-        var stepGoal = 10000;
-        if (activityInfo has :steps) {
-            var currentSteps = activityInfo.steps;
-            if (currentSteps != null) {
-                steps = currentSteps;
-            }
-        }
-        if (activityInfo has :stepGoal) {
-            var currentStepGoal = activityInfo.stepGoal;
-            if ((currentStepGoal != null) && (currentStepGoal > 0)) {
-                stepGoal = currentStepGoal;
-            }
-        }
-        var stepsProgress = steps.toFloat() / stepGoal.toFloat();
+        var stepsProgress = _steps.toFloat() / _stepGoal.toFloat();
         if (stepsProgress > 1.0) {
             stepsProgress = 1.0;
         }
@@ -156,9 +169,8 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
         dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
         drawBodyBatteryArc(dc, centerX, centerY, 164, 1.0);
 
-        var bodyBattery = getBodyBattery();
-        if (bodyBattery != null) {
-            var bodyProgress = bodyBattery.toFloat() / 100.0;
+        if (_bodyBattery != null) {
+            var bodyProgress = _bodyBattery.toFloat() / 100.0;
             if (bodyProgress > 1.0) {
                 bodyProgress = 1.0;
             }
