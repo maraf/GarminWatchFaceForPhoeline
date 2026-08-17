@@ -143,9 +143,6 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
                 stepGoal = currentStepGoal;
             }
         }
-        System.println("Phoeline metrics: steps=" + steps.toString() +
-            " stepGoal=" + stepGoal.toString());
-
         var stepsProgress = steps.toFloat() / stepGoal.toFloat();
         if (stepsProgress > 1.0) {
             stepsProgress = 1.0;
@@ -160,8 +157,6 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
         drawBodyBatteryArc(dc, centerX, centerY, 164, 1.0);
 
         var bodyBattery = getBodyBattery();
-        System.println("Phoeline metrics: bodyBattery=" +
-            (bodyBattery == null ? "null" : bodyBattery.toString()));
         if (bodyBattery != null) {
             var bodyProgress = bodyBattery.toFloat() / 100.0;
             if (bodyProgress > 1.0) {
