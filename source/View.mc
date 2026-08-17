@@ -15,21 +15,31 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
     private const CALORIES_COLOR = Graphics.createColor(255, 255, 179, 107);
     private const TIME_FILL_COLOR = STEP_RING_COLOR;
     private const TIME_OUTLINE_COLOR = Graphics.createColor(255, 22, 57, 63);
+    private var _background as BitmapResource?;
+    private var _weatherIcon as BitmapResource?;
+    private var _caloriesIcon as BitmapResource?;
+    private var _activityIcon as BitmapResource?;
+    private var _stepsIcon as BitmapResource?;
 
     function initialize() {
         WatchFace.initialize();
     }
 
     function onLayout(dc as Dc) as Void {
+        _background = WatchUi.loadResource(Rez.Drawables.WatchFaceBackground) as BitmapResource;
+        _weatherIcon = WatchUi.loadResource(Rez.Drawables.WeatherIcon) as BitmapResource;
+        _caloriesIcon = WatchUi.loadResource(Rez.Drawables.CaloriesIcon) as BitmapResource;
+        _activityIcon = WatchUi.loadResource(Rez.Drawables.ActivityIcon) as BitmapResource;
+        _stepsIcon = WatchUi.loadResource(Rez.Drawables.StepsIcon) as BitmapResource;
     }
 
     function onUpdate(dc as Dc) as Void {
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_BLACK);
         dc.clear();
 
-        var background = WatchUi.loadResource(Rez.Drawables.WatchFaceBackground)
-            as WatchUi.BitmapResource;
-        dc.drawBitmap(0, 0, background);
+        if (_background != null) {
+            dc.drawBitmap(0, 0, _background);
+        }
 
         var clockTime = System.getClockTime();
         var timeString = Lang.format("$1$:$2$", [
@@ -75,24 +85,25 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
         drawInfoText(dc, right, 228,
             temperature == null ? "--" : temperature.toNumber().format("%d"),
             Graphics.TEXT_JUSTIFY_RIGHT);
-        drawIcon(dc, Rez.Drawables.WeatherIcon, right + 4, 230);
+        drawIcon(dc, _weatherIcon, right + 4, 230);
         drawMetricText(dc, right - 16, 256,
             calories == null ? "--" : calories.toString(),
             Graphics.TEXT_JUSTIFY_RIGHT, CALORIES_COLOR);
-        drawIcon(dc, Rez.Drawables.CaloriesIcon, right - 12, 258);
+        drawIcon(dc, _caloriesIcon, right - 12, 258);
         drawMetricText(dc, right - 32, 284,
             bodyBattery == null ? "--" : bodyBattery.toNumber().format("%d"),
             Graphics.TEXT_JUSTIFY_RIGHT, BODY_BATTERY_RING_COLOR);
-        drawIcon(dc, Rez.Drawables.ActivityIcon, right - 28, 286);
+        drawIcon(dc, _activityIcon, right - 28, 286);
         drawMetricText(dc, right - 48, 312,
             steps == null ? "--" : steps.toString(),
             Graphics.TEXT_JUSTIFY_RIGHT, STEP_RING_COLOR);
-        drawIcon(dc, Rez.Drawables.StepsIcon, right - 44, 314);
+        drawIcon(dc, _stepsIcon, right - 44, 314);
     }
 
-    private function drawIcon(dc as Dc, resource as ResourceId, x as Number, y as Number) as Void {
-        var icon = WatchUi.loadResource(resource) as WatchUi.BitmapResource;
-        dc.drawBitmap(x, y, icon);
+    private function drawIcon(dc as Dc, icon as BitmapResource?, x as Number, y as Number) as Void {
+        if (icon != null) {
+            dc.drawBitmap(x, y, icon);
+        }
     }
 
     private function drawInfoText(dc as Dc, x as Number, y as Number,
