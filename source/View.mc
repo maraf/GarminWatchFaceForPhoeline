@@ -165,7 +165,7 @@ class PhoelineWatchFaceView extends WatchUi.WatchFace {
             drawProgressArc(dc, centerX, centerY, 184, stepsProgress);
         }
 
-        // The body-battery track runs from 6 o'clock counterclockwise to 3 o'clock.
+        // The body-battery track runs clockwise from 6 o'clock, through 9 and 12, to 3 o'clock.
         dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
         drawBodyBatteryArc(dc, centerX, centerY, 164, 1.0);
 
